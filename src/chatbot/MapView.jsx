@@ -17,7 +17,7 @@ const MapView = ({ stay, userLocation }) => {
   const [travelMode, setTravelMode] = useState("DRIVING");
 
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyCowxmQ-VUg5je4Qy9cFwJguGof3yEgX8s",
+    googleMapsApiKey: "",
     libraries: ["places"],
   });
 
