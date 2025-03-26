@@ -1,38 +1,367 @@
+body,
+html,
+#root {
+  height: 100%;
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  background: #f5f8fb;
+}
+
+header {
+  background-color: #0d6efd;
+  color: white;
+  padding: 20px;
+  font-size: 1.5rem;
+  text-align: center;
+  width: 80%;
+  max-width: 75%;
+  margin: auto; /* this centers it horizontally */
+}
+
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  max-width: 75%;
+  height: 90vh;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: auto; /* this centers it horizontally */
+}
+
+.messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #eef2f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.bubble {
+  max-width: 80%;
+  margin: 10px 0;
+  padding: 12px 16px;
+  border-radius: 20px;
+  white-space: pre-line;
+  font-size: 16px;
+}
+
+.bubble.bot {
+  background-color: #0d6efd;
+  color: white;
+  align-self: flex-start;
+}
+.option-button {
+  background-color: #0d6efd;
+  padding: 12px 16px;
+  border-radius: 20px;
+  font-size: 16px;
+  margin: 4px;
+  color: white;
+  align-self: flex-start;
+  border: none;
+  cursor: pointer;
+}
+.bubble.user {
+  background-color: #e0e0e0;
+  color: black;
+  align-self: flex-end;
+}
+
+.input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background: #fff;
+}
+
+.input-area input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  outline: none;
+  margin-right: 10px;
+}
+
+.input-area button {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.carousel-wrapper {
+  min-width: 80%;
+  width: 300px;
+}
+
+.hotel-card {
+  min-width: 250px;
+  flex-shrink: 0;
+}
+
+.hotel-card-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scroll-behavior: smooth;
+}
+
+.hotel-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+  margin: 10px 0;
+}
+
+.hotel-card {
+  background: #ffffff;
+  color: #000;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  width: 260px;
+  transition: transform 0.2s ease;
+}
+
+.hotel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hotel-card h4 {
+  margin-top: 0;
+  color: #0d6efd;
+}
+
+.card-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.card-buttons button {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  flex: 1;
+  transition: background 0.2s;
+}
+
+.card-buttons button:hover {
+  background: #084cd4;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+}
+
+.image-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.gallery-item {
+  overflow: hidden;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);
+}
+
+.hr-policies-section ul {
+  padding-left: 18px;
+  margin-top: 12px;
+}
+
+.hr-policies-section li {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.modal.modal-split {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 700px;
+  height: 90vh;
+  overflow: hidden;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+  position: relative;
+}
+
+.modal-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0; /* important for flex-based scroll */
+}
+
+
+.modal-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tab-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #e0e0e0;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button.active {
+  background: #0d6efd;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.tab-content p {
+  margin: 8px 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.score-dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.score-box {
+  flex: 1 1 45%;
+  background: #f0f4ff;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.score-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #0d6efd;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.map-button {
+  background: #eee;
+  padding: 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.close-button {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.hr-policies-box {
+  background: #fff;
+  margin: 12px;
+  padding: 14px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hr-policies-box h4 {
+  margin-bottom: 10px;
+  color: #0d6efd;
+}
+
+.faq-section details {
+  margin-bottom: 10px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  padding: 10px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+}
+
+.faq-section summary {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.faq-section p {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.safety-section ul {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.safety-section li {
+  margin-bottom: 6px;
+  font-size: 15px;
 }

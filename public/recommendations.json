@@ -1,0 +1,85 @@
+{
+  "recommended_stays": [
+    {
+      "name": "The Leela Palace",
+      "score": 22,
+      "amenities": [
+        "WiFi",
+        "Laundry",
+        "Gym"
+      ],
+      "distance_to_office_km": 2.5,
+      "alert_badges": [
+        "Health Risk Nearby"
+      ],
+      "lat": 12.9716,
+      "lng": 77.5946,
+      "images": [
+        "./hotels/1.jpg",
+        "./hotels/2.jpg",
+        "./hotels/3.jpg",
+        "./hotels/breakfast-5204352_1280.jpg",
+        "./hotels/room-6878004_1280 (1).jpg"
+      ],
+      "image_url": "C:/Users/cgl2kor/Downloads/download.jpg",
+      "tags": [
+        "women-friendly",
+        "long-stay",
+        "corporate-approved"
+      ]
+    },
+    {
+      "name": "Urban Inn",
+      "score": 20,
+      "amenities": [
+        "WiFi",
+        "Parking"
+      ],
+      "distance_to_office_km": 3.1,
+      "alert_badges": [
+        "Traffic Congestion Zone"
+      ],
+      "lat": 12.2958,
+      "lng": 76.6394,
+      "image_url": "./logo192.png",
+      "images": [
+        "./hotels/1.jpg",
+        "./hotels/2.jpg",
+        "./hotels/3.jpg",
+        "./hotels/breakfast-5204352_1280.jpg",
+        "./hotels/room-6878004_1280 (1).jpg"
+      ],
+      "tags": [
+        "long-stay",
+        "corporate-approved",
+        "solo-women"
+      ]
+    },
+    {
+      "name": "Comfort Living",
+      "score": 18,
+      "amenities": [
+        "WiFi",
+        "Kitchen"
+      ],
+      "distance_to_office_km": 4.2,
+      "alert_badges": [
+        "Traffic Congestion Zone"
+      ],
+      "images": [
+        "./hotels/1.jpg",
+        "./hotels/2.jpg",
+        "./hotels/3.jpg",
+        "./hotels/breakfast-5204352_1280.jpg",
+        "./hotels/room-6878004_1280 (1).jpg"
+      ],
+      "lat": 13.0827,
+      "lng": 80.2707,
+      "image_url": "C:/Users/cgl2kor/Downloads/download.jpg",
+      "tags": [
+        "long-stay",
+        "corporate-approved"
+      ]
+    }
+  ]
+}

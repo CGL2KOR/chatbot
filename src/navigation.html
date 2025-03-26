@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h1 id="nav" onclick="geoLocation()">Location</h1>
+
+    <script>
+        var x = document.getElementById("nav");
+
+function geoLocation(){
+
+    if(window.navigator.geolocation){
+        window.navigator.geolocation.getCurrentPosition(showPosition);
+    }else{
+        x.innerHTML = "this is not supp"
+    }
+}
+
+function showPosition(position){
+ x.innerHTML = ` lattitude : ${position.coords.latitude} <br>   
+                 longitude ${position.coords.longitude}`
+                 
+}
+    </script>
+</body>
+</html>
