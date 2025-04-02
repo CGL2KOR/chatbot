@@ -2,15 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import MapView from "./MapView";
-const cities = [
-  "Bangalore",
-  "Mumbai",
-  "Delhi",
-  "Hyderabad",
-  "Chennai",
-  "Pune",
-  "Coimbatore",
-];
+const cities = ["Bangalore", "Coimbatore", "Hyderabad", "Pune"];
 
 function ChatWindow() {
   const [messages, setMessages] = useState([
@@ -25,6 +17,15 @@ function ChatWindow() {
   const [selectedStay, setSelectedStay] = useState(null);
   const [modalTab, setModalTab] = useState("details");
   const [userLocation, setUserLocation] = useState(null);
+  const [formData, setFormData] = useState({
+    city: "",
+    area: "",
+    budget: "",
+    purpose: "",
+    filter: "",
+    proximity: 2.5,
+  });
+
 
   const chatRef = useRef(null);
 
@@ -48,10 +49,55 @@ function ChatWindow() {
     });
   }, [messages]);
 
+  const resetChat = () => {
+    setMessages([
+      { from: "bot", text: "Hi there! Which city are you traveling to?📍" },
+    ]);
+    setStep(1);
+    setInput("");
+    setAnsweredSteps({});
+    setSelectedCity("");
+    setFilterWomenSafe(false);
+    setSelectedStay(null);
+    setModalTab("details");
+  };
+
   const handleSend = async (value = null) => {
     const userInput = value || input;
     if (!userInput.trim()) return;
 
+    const greetings = ["hi", "hello", "start", "restart", "hey"];
+
+    if (userInput.length > 25) {
+      console.log("i was here");
+
+      setMessages((prev) => [...prev, { from: "user", text: userInput }]);
+      setInput("");
+      setIsTyping(true);
+      try {
+
+        if (step >= 5) {
+          applyFilter("all");
+        }
+      } catch (error) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            from: "bot",
+            text: "❌ Error contacting assistant. Please try again.",
+          },
+        ]);
+        setStep(0);
+      }
+
+      setIsTyping(false);
+      return;
+    }
+
+    if (greetings.includes(userInput.trim().toLowerCase())) {
+      resetChat();
+      return;
+    }
 
     setMessages((prev) => [...prev, { from: "user", text: userInput }]);
     setInput("");
@@ -59,9 +105,8 @@ function ChatWindow() {
     setIsTyping(true);
 
     setTimeout(async () => {
-      
       if (userInput.toLowerCase().includes("filter")) {
-        setStep(4);
+        setStep(5);
         setIsTyping(false);
         setAnsweredSteps((prev) => ({ ...prev, 4: false }));
         setMessages((prev) => [
@@ -76,21 +121,47 @@ function ChatWindow() {
       let botReply = "";
 
       if (step === 1) {
+        const validCity = cities.find(
+          (city) => city.toLowerCase() === userInput.trim().toLowerCase()
+        );
+
+        if (!validCity) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              from: "bot",
+              text: "⚠️ Please select a valid city from the list shown.",
+            },
+          ]);
+          setIsTyping(false);
+          setAnsweredSteps((prev) => ({ ...prev, 1: false }));
+          return;
+        }
+
         setSelectedCity(userInput);
-        botReply = `Awesome! What’s your preferred budget 💰 for your stay in ${userInput}?`;
+        setFormData((prev) => ({ ...prev, city: validCity }));
+        botReply = `Got it! Which area in ${validCity} are you looking to stay in? 🗺️`;
         setStep(2);
+
       } else if (step === 2) {
-        botReply = "Are you traveling for business 🧑‍💼💻 or personal🧔 ?";
+        setFormData((prev) => ({ ...prev, area: userInput }));
+        botReply = `Awesome! What’s your preferred budget 💰 for your stay in ${formData.city}?`;
         setStep(3);
+
       } else if (step === 3) {
-        botReply = "Would you like to apply any filters?";
+        setFormData((prev) => ({ ...prev, budget: userInput }));
+        botReply = "Are you traveling for business 🧑‍💼💻 or personal🧔 ?";
         setStep(4);
+
       } else if (step === 4) {
+        setFormData((prev) => ({ ...prev, purpose: userInput }));
+        botReply = "Would you like to apply any filters?";
+        setStep(5);
+
+      } else if (step === 5) {
         return;
-      } else {
-        botReply =
-          "Let me know if you want more suggestions or type 'restart' to start again.";
       }
+
 
       setMessages((prev) => [...prev, { from: "bot", text: botReply }]);
       setIsTyping(false);
@@ -102,33 +173,46 @@ function ChatWindow() {
   };
 
   const applyFilter = async (type) => {
-    setAnsweredSteps((prev) => ({ ...prev, 4: true }));
+    setAnsweredSteps((prev) => ({ ...prev, 5: true }));
     setIsTyping(true);
+    setFormData((prev) => ({ ...prev, filter: type }));
+
 
     setTimeout(async () => {
-      const res = await fetch("/recommendations.json");
-      let data = await res.json();
+      console.log("form Data ", formData);
+      setMessages((prev) => [
+        ...prev,
+        { from: "bot", text: "🔍 Great! Finding the best stays for you..." },
+      ]);
+      const dataResponse = await fetch("http://127.0.0.1:8080/ai_recommend_safe_stay",
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          method: "POST",
+          body: JSON.stringify(formData)
+        }
+      )
+
+
+      // console.log("resp", await dataResponse.json());
+
+      // const res = await fetch("/recommendations.json");
+      let data = await dataResponse.json();
+      // let actualData = extractJsonFromMessage(data);
+      console.log(" data ", data, " ", typeof data);
       let filtered = data.recommended_stays;
 
-      if (type === "women") {
-        filtered = filtered.filter((stay) =>
-          stay.tags?.includes("women-friendly")
-        );
-        setFilterWomenSafe(true);
-      } else if (type === "long") {
-        filtered = filtered.filter((stay) => stay.tags?.includes("long-stay"));
-        setFilterWomenSafe(false);
-      } else if (type === "corporate") {
-        filtered = filtered.filter((stay) =>
-          stay.tags?.includes("corporate-approved")
-        );
-        setFilterWomenSafe(false);
-      } else if (type === "solo-women") {
-        filtered = filtered.filter((stay) => stay.tags?.includes("solo-women"));
-        setFilterWomenSafe(true);
-      } else {
-        setFilterWomenSafe(false);
-      }
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: "bot",
+          text: `Based on your search criteria, I have computed the safety, affordability, and compliance scores for the hotels.
+          Here are the top ${filtered.length} recommended stays along with their scores and safety analysis`
+        },
+      ]);
+
       const top = filtered.slice(0, 3);
 
       const stayMessages = [
@@ -152,16 +236,18 @@ function ChatWindow() {
                   <div className="card-right">
                     <h4>{stay.name}</h4>
                     <p>
-                      <strong>Score:</strong> {stay.score}
+                      <strong>Safety Score:</strong> {stay.score}
                     </p>
-                    <p>🛏 {stay.amenities.join(", ")}</p>
-                    <p>📍 {stay.distance_to_office_km} km from work</p>
+                    <p> 🏢 {stay.amenities?.join(", ")}</p>
+
+                    <p>📍 {stay.distance_to_office_km} km from {formData.area}</p>
                     <p>
                       ⚠{" "}
-                      {stay.alert_badges.length
+                      {Array.isArray(stay.alert_badges) && stay.alert_badges.length > 0
                         ? stay.alert_badges.join(", ")
-                        : "None"}
+                        : " You are Safe here"}
                     </p>
+
                     {filterWomenSafe && <p>✅ Women Safety Verified</p>}
                     <a
                       href={`https://www.google.com/maps/search/${encodeURIComponent(
@@ -225,7 +311,7 @@ function ChatWindow() {
           </div>
         )}
 
-        {step === 3 && !answeredSteps[3] && (
+        {step === 4 && !answeredSteps[4] && (
           <div className="bubble-options">
             <button
               className="option-button"
@@ -242,7 +328,7 @@ function ChatWindow() {
           </div>
         )}
 
-        {step === 4 && !answeredSteps[4] && (
+        {step === 5 && !answeredSteps[5] && (
           <div className="bubble-options">
             <button
               onClick={() => applyFilter("women")}
@@ -302,7 +388,6 @@ function ChatWindow() {
                   "reviews",
                   "FAQs",
                   "safety",
-                  "images",
                   "HR Policies",
                   "map",
                 ].map((tab) => (
@@ -317,6 +402,8 @@ function ChatWindow() {
                   </button>
                 ))}
               </div>
+
+
 
               <div className="tab-content">
                 {modalTab === "HR Policies" && (
@@ -363,7 +450,7 @@ function ChatWindow() {
 
                     <div className="score-dashboard">
                       <div className="score-box">
-                        <strong>🏅 Score</strong>
+                        <strong>🏅Safety Score</strong>
                         <div className="score-value">{selectedStay.score}</div>
                       </div>
                       <div className="score-box">
@@ -485,18 +572,3 @@ function ChatWindow() {
 }
 
 export default ChatWindow;
-
-const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const toRad = (value) => (value * Math.PI) / 180;
-  const R = 6371; // km
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return (R * c).toFixed(2); // returns in km
-};
